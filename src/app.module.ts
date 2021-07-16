@@ -12,6 +12,6 @@ import { ProductsModule } from './products/products.module';
     ),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}
