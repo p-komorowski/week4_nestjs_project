@@ -1,12 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { Product } from './product.model';
 
 @Injectable()
 export class ProductsService {
-  private products: Product[] = [];
   constructor(
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
@@ -29,23 +27,14 @@ export class ProductsService {
     return result.id;
   }
 
-  async getProducts() : Promise< Product[]>{
+  async getProducts(): Promise<Product[]> {
     const products = await this.productModel.find().exec();
     return products;
-    
   }
 
-
-  async getSingleProduct(productId: string) {
+  async getSingleProduct(productId: string): Promise<Product> {
     const product = await this.findProduct(productId);
-    return {
-      id: product.id,
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      rating: product.rating,
-      author: product.author,
-    };
+    return product;
   }
 
   async updateProduct(
@@ -74,9 +63,6 @@ export class ProductsService {
     }
     updatedProduct.save();
   }
-  async deleteProduct(prodId: string) {
-    await this.productModel.deleteOne({ _id: prodId }).exec();
-  }
   async updateProductPut(
     productId: string,
     title: string,
@@ -102,6 +88,9 @@ export class ProductsService {
       updatedProduct.author = author;
     }
     updatedProduct.save();
+  }
+  async deleteProduct(prodId: string) {
+    await this.productModel.deleteOne({ _id: prodId }).exec();
   }
 
   private async findProduct(id: string): Promise<Product> {
