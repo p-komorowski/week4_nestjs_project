@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product } from './product.model';
+import { postData } from './postData';
 
 @Injectable()
 export class ProductsService {
@@ -24,7 +25,14 @@ export class ProductsService {
       author,
     });
     const result = await newProduct.save();
-    return result.id;
+    const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?]$/g;
+    if (title.match(regex)) {
+      return result.id;
+    } else {
+      throw new NotFoundException(
+        'please input lowercase letters and one special character',
+      );
+    }
   }
 
   async getProducts(): Promise<Product[]> {
@@ -37,56 +45,17 @@ export class ProductsService {
     return product;
   }
 
-  async updateProduct(
-    productId: string,
-    title: string,
-    desc: string,
-    price: number,
-    rating: number,
-    author: string,
-  ) {
+  async updateProduct(productId: string, postUpdateProduct = new postData()) {
     const updatedProduct = await this.findProduct(productId);
-    if (title) {
-      updatedProduct.title = title;
-    }
-    if (desc) {
-      updatedProduct.description = desc;
-    }
-    if (price) {
-      updatedProduct.price = price;
-    }
-    if (rating) {
-      updatedProduct.rating = rating;
-    }
-    if (author) {
-      updatedProduct.author = author;
-    }
+    postUpdateProduct;
     updatedProduct.save();
   }
   async updateProductPut(
     productId: string,
-    title: string,
-    desc: string,
-    price: number,
-    rating: number,
-    author: string,
+    postUpdateProductPut = new postData(),
   ) {
     const updatedProduct = await this.findProduct(productId);
-    if (title) {
-      updatedProduct.title = title;
-    }
-    if (desc) {
-      updatedProduct.description = desc;
-    }
-    if (price) {
-      updatedProduct.price = price;
-    }
-    if (rating) {
-      updatedProduct.rating = rating;
-    }
-    if (author) {
-      updatedProduct.author = author;
-    }
+    postUpdateProductPut;
     updatedProduct.save();
   }
   async deleteProduct(prodId: string) {

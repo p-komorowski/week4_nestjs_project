@@ -1,4 +1,4 @@
-import { ProductsService } from './products.service';
+import { ProductsService } from '../../src/products/products.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 describe('Products.Controller', () => {

@@ -6,8 +6,7 @@ import {
   Param,
   Patch,
   Delete,
-  Put,
-  NotFoundException,
+  Put
 } from '@nestjs/common';
 import { ProductsModule } from './products.module';
 import { ProductsService } from './products.service';
@@ -34,12 +33,7 @@ export class ProductsController {
       rating,
       author,
     );
-    const regex = /(^[a-z0-9!@#$%^&*()=_{}:;"'<,.>?\d]+$)/g;
-    if (title.match(regex)) {
-      return { id: generatedId };
-    } else {
-      throw new NotFoundException('only lowercase letters are allowed!');
-    }
+  return generatedId
   }
 
   @Get()
@@ -64,17 +58,11 @@ export class ProductsController {
       author: string;
     },
   ) {
-    const { title, description, price, rating, author } = postData;
     await this.productsService.updateProduct(
       prodId,
-      title,
-      description,
-      price,
-      rating,
-      author,
+     postData
     );
   }
-
   @Put(':id')
   async updateProductPut(
     @Param('id') prodId: string,
@@ -87,14 +75,9 @@ export class ProductsController {
       author: string;
     },
   ) {
-    const { title, description, price, rating, author } = postData;
     await this.productsService.updateProduct(
       prodId,
-      title,
-      description,
-      price,
-      rating,
-      author,
+      postData
     );
   }
 
