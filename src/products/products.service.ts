@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product } from './product.model';
+import { postData } from './postData';
+import { AddProductDto } from './add-Product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -9,91 +11,45 @@ export class ProductsService {
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
 
-  async insertProduct(
-    title: string,
-    desc: string,
-    price: number,
-    rating: number,
-    author: string,
-  ): Promise<string> {
-    const newProduct = new this.productModel({
-      title,
-      description: desc,
-      price,
-      rating,
-      author,
-    });
-    const result = await newProduct.save();
-    return result.id;
+  async insertProduct(newProduct: AddProductDto): Promise<string> {
+    const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?€]$/g;
+    if (newProduct.title.match(regex)) {
+      const newProduct = new this.productModel();
+      const result = await newProduct.save();
+      return result.id;
+    } else {
+      throw new NotFoundException(
+        'Input can conatin only lowercase signs and one special character',
+      );
+    }
   }
 
   async getProducts(): Promise<Product[]> {
-    const products = await this.productModel.find().exec();
-    return products;
+    return this.productModel.find().exec();
   }
 
   async getSingleProduct(productId: string): Promise<Product> {
-    const product = await this.findProduct(productId);
-    return product;
+    return this.findProduct(productId);
+  }
+  async updateProduct(productId: string, postUpdateProduct: postData) {
+    const updatedProduct = await this.findProduct(productId);
+    await updatedProduct.update({
+      ...postUpdateProduct,
+    });
   }
 
-  async updateProduct(
-    productId: string,
-    title: string,
-    desc: string,
-    price: number,
-    rating: number,
-    author: string,
-  ) {
+  async updateProductPut(productId: string, postUpdateProduct: postData) {
     const updatedProduct = await this.findProduct(productId);
-    if (title) {
-      updatedProduct.title = title;
-    }
-    if (desc) {
-      updatedProduct.description = desc;
-    }
-    if (price) {
-      updatedProduct.price = price;
-    }
-    if (rating) {
-      updatedProduct.rating = rating;
-    }
-    if (author) {
-      updatedProduct.author = author;
-    }
-    updatedProduct.save();
+    await updatedProduct.update({
+      ...postUpdateProduct,
+    });
   }
-  async updateProductPut(
-    productId: string,
-    title: string,
-    desc: string,
-    price: number,
-    rating: number,
-    author: string,
-  ) {
-    const updatedProduct = await this.findProduct(productId);
-    if (title) {
-      updatedProduct.title = title;
-    }
-    if (desc) {
-      updatedProduct.description = desc;
-    }
-    if (price) {
-      updatedProduct.price = price;
-    }
-    if (rating) {
-      updatedProduct.rating = rating;
-    }
-    if (author) {
-      updatedProduct.author = author;
-    }
-    updatedProduct.save();
-  }
+
   async deleteProduct(prodId: string) {
     await this.productModel.deleteOne({ _id: prodId }).exec();
   }
 
-  private async findProduct(id: string): Promise<Product> {
+  async findProduct(id: string): Promise<Product> {
     const product = await this.productModel.findById(id).exec();
     if (!product) {
       throw new NotFoundException('could not find product');
