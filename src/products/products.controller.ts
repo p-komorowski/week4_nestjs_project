@@ -6,10 +6,12 @@ import {
   Param,
   Patch,
   Delete,
-  Put
+  Put,
 } from '@nestjs/common';
+import { AddProductDto } from './add-Product.dto';
 import { ProductsModule } from './products.module';
 import { ProductsService } from './products.service';
+
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -17,23 +19,12 @@ export class ProductsController {
   @Post()
   async addProduct(
     @Body()
-    postData: {
-      title: string;
-      description: string;
-      price: number;
-      rating: number;
-      author: string;
-    },
+    postData: AddProductDto
   ): Promise<ProductsModule> {
-    const { title, description, price, rating, author } = postData;
     const generatedId = await this.productsService.insertProduct(
-      title,
-      description,
-      price,
-      rating,
-      author,
+      postData
     );
-  return generatedId
+    return generatedId;
   }
 
   @Get()
@@ -41,6 +32,7 @@ export class ProductsController {
     const products = await this.productsService.getProducts();
     return products;
   }
+
   @Get(':id')
   getProduct(@Param('id') prodId: string) {
     return this.productsService.getSingleProduct(prodId);
@@ -50,35 +42,18 @@ export class ProductsController {
   async updateProduct(
     @Param('id') prodId: string,
     @Body()
-    postData: {
-      title: string;
-      description: string;
-      price: number;
-      rating: number;
-      author: string;
-    },
+    postData,
   ) {
-    await this.productsService.updateProduct(
-      prodId,
-     postData
-    );
+    await this.productsService.updateProduct(prodId, postData);
   }
+
   @Put(':id')
   async updateProductPut(
     @Param('id') prodId: string,
     @Body()
-    postData: {
-      title: string;
-      description: string;
-      price: number;
-      rating: number;
-      author: string;
-    },
+    postData,
   ) {
-    await this.productsService.updateProduct(
-      prodId,
-      postData
-    );
+    await this.productsService.updateProduct(prodId, postData);
   }
 
   @Delete(':id')
