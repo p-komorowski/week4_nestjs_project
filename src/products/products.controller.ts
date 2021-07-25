@@ -16,10 +16,12 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  
   @Post()
   async addProduct(
     @Body()
     postData: AddProductDto
+    
   ): Promise<ProductsModule> {
     const generatedId = await this.productsService.insertProduct(
       postData

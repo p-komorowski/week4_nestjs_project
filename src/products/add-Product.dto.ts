@@ -1,7 +1,24 @@
+import {Expose,Exclude} from 'class-transformer';
+import { IsNumber,IsString } from 'class-validator';
+@Exclude()
 export class AddProductDto{
-    title: string;
-    description: string;
-    price: number;
-    rating: number;
-    author: string;
+@Expose()
+@IsString()
+title: string;
+
+@Expose()
+@IsString()
+description: string;
+
+@Expose()
+@IsNumber()
+price: number;
+
+@Expose()
+@IsNumber()
+rating: number;
+
+@Expose()
+@IsString()
+author: string;
 }

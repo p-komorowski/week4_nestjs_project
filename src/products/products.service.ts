@@ -14,8 +14,10 @@ export class ProductsService {
   async insertProduct(newProduct: AddProductDto): Promise<string> {
     const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?€]$/g;
     if (newProduct.title.match(regex)) {
-      const newProduct = new this.productModel();
-      const result = await newProduct.save();
+      const addedProduct = new this.productModel({
+        ...newProduct
+      });
+      const result = await addedProduct.save();
       return result.id;
     } else {
       throw new NotFoundException(
