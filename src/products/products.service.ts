@@ -15,7 +15,7 @@ export class ProductsService {
     const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?€]$/g;
     if (newProduct.title.match(regex)) {
       const addedProduct = new this.productModel({
-        ...newProduct
+        ...newProduct,
       });
       const result = await addedProduct.save();
       return result.id;
