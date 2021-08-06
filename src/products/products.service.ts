@@ -15,10 +15,10 @@ export class ProductsService {
     const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?€]$/g;
     if (newProduct.title.match(regex)) {
       const addedProduct = new this.productModel({
-        ...newProduct,
+        ...newProduct
       });
       const result = await addedProduct.save();
-      return result.id;
+      return result.id
     } else {
       throw new NotFoundException(
         'Input can conatin only lowercase signs and one special character',
@@ -31,19 +31,19 @@ export class ProductsService {
   }
 
   async getSingleProduct(productId: string): Promise<Product> {
-    return this.findProduct(productId);
+    return this.findProduct(productId)
   }
   async updateProduct(productId: string, postUpdateProduct: postData) {
     const updatedProduct = await this.findProduct(productId);
     await updatedProduct.update({
-      ...postUpdateProduct,
+      ...postUpdateProduct
     });
   }
 
   async updateProductPut(productId: string, postUpdateProduct: postData) {
     const updatedProduct = await this.findProduct(productId);
     await updatedProduct.update({
-      ...postUpdateProduct,
+      ...postUpdateProduct
     });
   }
 
@@ -56,6 +56,6 @@ export class ProductsService {
     if (!product) {
       throw new NotFoundException('could not find product');
     }
-    return product;
+    return product
   }
 }
