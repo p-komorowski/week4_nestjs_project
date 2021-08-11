@@ -1,4 +1,4 @@
-/* 
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AddProductDto } from 'src/products/dto/add-Product.dto';
 import { postData } from 'src/products/dto/postData.dto';
@@ -134,4 +134,4 @@ describe('Cat Controller', () => {
       });
     });
 });
-}) */
+})
