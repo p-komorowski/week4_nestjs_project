@@ -11,7 +11,7 @@ export class UsersService {
 
   async create(newUser: RegisterDto): Promise<any> {
     const userReg = await this.userModel.findOne({ email: newUser.email });
-    if (userReg === null) {
+    if (!userReg) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newUser.password, salt);
       const addedUser = new this.userModel({
