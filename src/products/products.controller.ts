@@ -9,57 +9,50 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { AddProductDto } from './add-Product.dto';
+import { JwtAuthGuard } from 'src/auth/strategy/jwt-auth.guard';
+import { AddProductDto } from './dto/add-Product.dto';
 import { ProductsModule } from './products.module';
 import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(public productsService: ProductsService) {}
 
   @Post()
   async addProduct(
-    @Body()
-    postData: AddProductDto,
-  ): Promise<ProductsModule> {
-    const generatedId = await this.productsService.insertProduct(postData);
-    return generatedId
+    @Body()postData: AddProductDto,): Promise<ProductsModule> {
+    return this.productsService.insertProduct(postData);
   }
 
-  @UseGuards(JwtAuthGuard)
+ /*  @UseGuards(JwtAuthGuard) */
   @Get()
   async getAllProducts() {
-    const products = await this.productsService.getProducts();
-    return products
+    return await this.productsService.getProducts();
   }
-  @UseGuards(JwtAuthGuard)
+  
+ /*  @UseGuards(JwtAuthGuard) */
   @Get(':id')
   getProduct(@Param('id') prodId: string) {
     return this.productsService.getSingleProduct(prodId)
   }
 
-  @UseGuards(JwtAuthGuard)
+ /*  @UseGuards(JwtAuthGuard) */
   @Patch(':id')
   async updateProduct(
     @Param('id') prodId: string,
-    @Body()
-    postData
-  ) {
+    @Body()postData: AddProductDto) {
     await this.productsService.updateProduct(prodId, postData);
   }
 
-  @UseGuards(JwtAuthGuard)
+  /* @UseGuards(JwtAuthGuard) */
   @Put(':id')
   async updateProductPut(
     @Param('id') prodId: string,
-    @Body()
-    postData
-  ) {
+    @Body()postData: AddProductDto ) {
     await this.productsService.updateProduct(prodId, postData);
   }
 
-  @UseGuards(JwtAuthGuard)
+ /*  @UseGuards(JwtAuthGuard) */
   @Delete(':id')
   async removeProduct(@Param('id') prodId: string) {
     await this.productsService.deleteProduct(prodId)
