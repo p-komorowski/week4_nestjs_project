@@ -12,13 +12,13 @@ const mockProducts = (
   description = 'testDesc',
   price = 42,
   author = 'testAuthor',
-  rating = 5.5,
+  rating = 5.5
 ): AddProductDto => ({
   title,
   description,
   price,
   author,
-  rating,
+  rating
 });
 
 const mockProductsDoc = (mock?: Partial<AddProductDto>): Partial<postData> => ({
@@ -42,18 +42,18 @@ const productsDocArray = [
     description: 'testDesc',
     price: 42,
     author: 'testAuthor',
-    rating: 5.5,
+    rating: 5.5
   }),
   mockProductsDoc({
     title: 'testTitle1',
     description: 'testDesc1',
     price: 22,
     author: 'testAuthor1',
-    rating: 9.5,
+    rating: 9.5
   }),
 ];
 
-describe('CatService', () => {
+describe('ProductsService', () => {
   let service: ProductsService;
   let model: Model<Product>;
 
@@ -63,16 +63,15 @@ describe('CatService', () => {
         ProductsService,
         {
           provide: getModelToken('Product'),
-          // notice that only the functions we call from the model are mocked
           useValue: {
             new: jest.fn().mockResolvedValue(mockProducts()),
             constructor: jest.fn().mockResolvedValue(mockProducts()),
             find: jest.fn(),
-            findOne: jest.fn(),
+            findById: jest.fn(),
             update: jest.fn(),
             create: jest.fn(),
-            remove: jest.fn(),
-            exec: jest.fn(),
+            deleteOne: jest.fn(),
+            exec: jest.fn()
           },
         },
       ],
@@ -89,7 +88,6 @@ describe('CatService', () => {
     jest.clearAllMocks();
   });
 
-  // properly allowing for us to successfully test them.
   it('should return all products', async () => {
     jest.spyOn(model, 'find').mockReturnValue({
       exec: jest.fn().mockResolvedValueOnce(productsArray),
@@ -121,7 +119,7 @@ describe('CatService', () => {
         description: 'testdesc!',
         price: 42,
         author: 'testauthor!',
-        rating: 5.5,
+        rating: 5.5
       }),
     );
     const newProduct = await service.insertProduct({
@@ -129,10 +127,10 @@ describe('CatService', () => {
       description: 'testdesc!',
       price: 42,
       author: 'testauthor!',
-      rating: 5.5,
+      rating: 5.5
     });
     expect(newProduct).toEqual(
-      mockProducts('testTitle', 'testDesc', 42, 'testAuthor', 5.5),
+      mockProducts('testtitle!', 'testdesc!', 42, 'testauthor!', 5.5),
     );
   });
 
@@ -145,7 +143,7 @@ describe('CatService', () => {
           description: 'testDesc',
           price: 42,
           author: 'testAuthor',
-          rating: 5.5,
+          rating: 5.5
         }),
       }),
     );
@@ -154,7 +152,7 @@ describe('CatService', () => {
       description: 'testDesc',
       price: 42,
       author: 'testAuthor',
-      rating: 5.5,
+      rating: 5.5
     });
     expect(updatedCat).toEqual(
       mockProducts('testTitle', 'testId', 42, 'testAuthor', 5.5),
