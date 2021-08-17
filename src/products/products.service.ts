@@ -1,40 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Product } from './product.model';
-import { postData } from './dto/postData.dto';
-import { AddProductDto } from './dto/add-Product.dto';
+import {Injectable, NotFoundException} from '@nestjs/common';
+import {Product} from './product.model';
+import {postData} from './dto/post-data.dto';
+import {AddProductDto} from './dto/add-product.dto';
+import {ProductRepository} from "./repository/product.repository";
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectModel('Product') private readonly productModel: Model<Product>,
-  ) {}
+  constructor(private readonly repository: ProductRepository) {}
 
   async insertProduct(newProduct: AddProductDto): Promise<string> {
     const regex = /^[a-z]+[!@#$%^&*()=_{}:;"'<,.>?€]$/g;
     if (newProduct.title.match(regex)) {
-      const addedProduct = new this.productModel({
-        ...newProduct
-      });
-      const result = await addedProduct.save();
+      const result = await this.repository.save({...newProduct});
       return result.id
     } else {
       throw new NotFoundException(
-        'Input can conatin only lowercase signs and one special character',
+        'Input can contain only lowercase signs and one special character',
       );
     }
   }
 
-  async getProducts(): Promise<Product[]> {
-    return this.productModel.find().exec();
+  public async getProducts(): Promise<Product[]> {
+    return this.repository.findAll();
   }
 
   async getSingleProduct(productId: string): Promise<Product> {
-    return (await this.findProduct(productId))
+    return (await this.repository.findOne(productId))
   }
-  async updateProduct(productId: string, postUpdateProduct: postData) {
-    const updatedProduct = await this.findProduct(productId);
+  async updateProduct(productId: string, postUpdateProduct: postData): Promise<void> {
+    const updatedProduct = await this.repository.findOne(productId);
     await updatedProduct.update({
       ...postUpdateProduct
     });
@@ -57,5 +51,4 @@ export class ProductsService {
       throw new NotFoundException('could not find product');
     }
     return product
-  }
 }
