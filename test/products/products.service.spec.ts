@@ -1,56 +1,61 @@
-import { ProductsService } from '../../src/products/products.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-describe('Products.Controller', () => {
-  let service: ProductsService;
+import {ProductsService} from '../../src/products/products.service';
+import {Test, TestingModule} from '@nestjs/testing';
+import {newProduct, productModelMock} from "./mock/product.mock";
+import {ProductRepository} from "../../src/products/repository/product.repository";
+import {mockProductRepositoryStub} from "./mock/product-repository.stub";
+import {NotFoundException} from "@nestjs/common";
 
-  const mockUsersModel = {};
+describe('ProductsService', () => {
+  let service: ProductsService;
+  let repository: ProductRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductsService,
         {
-          provide: getModelToken('Product'),
-          useValue: mockUsersModel,
+          provide: ProductRepository,
+          useValue: mockProductRepositoryStub
         },
       ],
     }).compile();
     service = module.get<ProductsService>(ProductsService);
+    repository = module.get<ProductRepository>(ProductRepository);
   });
 
-  it('should be definde', () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should insert new product', () => {
-    expect(
-      service.insertProduct('testTitle', 'testDesc', 29.0, 6.0, 'testAuthor'),
-    );
+  it('should successfully return all products', async () => {
+    const cats = await service.getProducts();
+    expect(cats).toEqual([productModelMock]);
   });
 
-  it('should get all products', () => {
-    expect(service.getProducts());
+  it('should getSingleProduct by id', async () => {
+    const foundProducts = await service.getSingleProduct('id');
+    expect(foundProducts).toEqual(productModelMock);
   });
 
-  it('should get single product', () => {
-    expect(service.getSingleProduct('testId'));
+  it('should throw NotFound if regex does not match', async () => {
+    const newProductWithWrongTile = {...newProduct, title: 'a'};
+
+    await expect(service.insertProduct(newProductWithWrongTile)).rejects.toThrow(NotFoundException);
   });
 
-  it('should update product', () => {
-    expect(
-      service.updateProduct(
-        'testId',
-        'testTitle',
-        'testDesc',
-        29.99,
-        4.0,
-        'testAuthor',
-      ),
-    );
-  });
+  it('should return id if regex does match', async () => {
+    const newProductWithCorrectTile = {...productModelMock, title: 'a!'};
 
-  it('should delete product', () => {
-    expect(service.deleteProduct('testId'));
+    const results = await service.insertProduct(newProductWithCorrectTile);
+
+    await expect(results).toEqual(productModelMock.id);
+  })
+
+  it('should delete a product successfully', async () => {
+    await service.deleteProduct('a bad id');
+
+    const results = jest.spyOn(repository, 'delete');
+
+    expect(results).toBeCalledTimes(1);
   });
 });
