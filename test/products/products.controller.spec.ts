@@ -1,55 +1,48 @@
-import { ProductsService} from 'src/products/products.service'
-import { ProductsController } from 'src/products/products.controller';
-import { Test, TestingModule } from '@nestjs/testing';
+import {Test, TestingModule} from '@nestjs/testing';
+import {ProductsController} from '../../src/products/products.controller';
+import {ProductsService} from '../../src/products/products.service';
+import {productModelMock} from "./mock/product.mock";
 
-describe('Products.Controller', () => {
+describe('Products Controller', () => {
   let controller: ProductsController;
+  let service: ProductsService;
 
-  const mockUsersService = {};
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
-      providers: [ProductsService],
-    })
-      .overrideProvider(ProductsService)
-      .useValue(mockUsersService)
-      .compile();
+      providers: [
+        {
+          provide: ProductsService,
+          useValue: {
+            getAll: jest.fn().mockResolvedValue([productModelMock]),
+            getOne: jest.fn().mockResolvedValue(productModelMock),
+            getSingleProduct: jest.fn().mockResolvedValue(productModelMock),
+            insertOne: jest.fn(),
+            updateOne: jest.fn()
+          }
+        }
+      ]
+    }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
+    service = module.get<ProductsService>(ProductsService);
   });
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should add product', () => {
-    expect(
-      controller.addProduct({
-        title: ' testtitle',
-        description: 'testdesc',
-        price: 2.99,
-        rating: 5.0,
-        author: 'testauthor',
-      })
-    );
+  describe('getAllProducts', () => {
+    it('should get all products', () => {
+      expect(controller.getAllProducts()).resolves.toEqual([productModelMock]);
+    });
   });
 
-  it('should get all products', () => {
-    expect(controller.getAllProducts());
-  });
-
-  it('should update product', () => {
-    expect(
-      controller.updateProduct('testId', {
-        title: 'testTitle',
-        description: 'testDesc',
-        price: 29.99,
-        rating: 4.0,
-        author: 'testAuthor',
-      }),
-    );
-  });
-  
-  it('should remove product', () => {
-    expect(controller.removeProduct('testId'))
+  describe('removeProduct', () => {
+    it('should delete product', () => {
+      expect(controller.removeProduct('id that exists')).resolves.toEqual({
+        deleted: true
+      });
+    });
   });
 });
