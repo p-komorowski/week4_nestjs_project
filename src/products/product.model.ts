@@ -8,7 +8,7 @@ export const ProductSchema = new mongoose.Schema({
   author: { type: String, required: true },
 });
 
-export class Product extends mongoose.Document {
+export class zProduct extends mongoose.Document {
   id: string;
   title: string;
   description: string;
