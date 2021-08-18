@@ -122,16 +122,15 @@ describe('ProductsService', () => {
         rating: 5.5
       }),
     );
-    const newProduct = await service.insertProduct({
+    const newProduct = ({
+      _id:'id',
       title: 'testtitle!',
       description: 'testdesc!',
       price: 42,
       author: 'testauthor!',
       rating: 5.5
     });
-    expect(newProduct).toEqual(
-      mockProducts('testtitle!', 'testdesc!', 42, 'testauthor!', 5.5),
-    );
+    expect(await service.insertProduct(newProduct)).toEqual(newProduct._id);
   });
 
   it.skip('should update a product successfully', async () => {
@@ -161,6 +160,7 @@ describe('ProductsService', () => {
 
   it('should delete a product successfully', async () => {
     jest.spyOn(model, 'deleteOne').mockResolvedValueOnce(true as any);
-    expect(service.deleteProduct('a bad id')).toEqual({ deleted: true });
+    await service.deleteProduct('a bad id')
+    expect().toBeCalled(1);
   });
 });
