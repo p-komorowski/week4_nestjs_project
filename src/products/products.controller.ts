@@ -1,7 +1,8 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Put,} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards,} from '@nestjs/common';
 import {AddProductDto} from './dto/add-product.dto';
 import {ProductsService} from './products.service';
 import {Product} from "./product.model";
+import { JwtAuthGuard } from 'src/auth/strategy/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -13,19 +14,19 @@ export class ProductsController {
     return this.productsService.insertProduct(postData);
   }
 
- /*  @UseGuards(JwtAuthGuard) */
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllProducts(): Promise<Product[]> {
     return await this.productsService.getProducts();
   }
   
- /*  @UseGuards(JwtAuthGuard) */
+ @UseGuards(JwtAuthGuard)
   @Get(':id')
   getProduct(@Param('id') prodId: string) {
     return this.productsService.getSingleProduct(prodId)
   }
 
- /*  @UseGuards(JwtAuthGuard) */
+ @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateProduct(
     @Param('id') prodId: string,
@@ -33,7 +34,7 @@ export class ProductsController {
     await this.productsService.updateProduct(prodId, postData);
   }
 
-  /* @UseGuards(JwtAuthGuard) */
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async updateProductPut(
     @Param('id') prodId: string,
@@ -41,7 +42,7 @@ export class ProductsController {
     await this.productsService.updateProduct(prodId, postData);
   }
 
- /*  @UseGuards(JwtAuthGuard) */
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async removeProduct(@Param('id') prodId: string) {
     await this.productsService.deleteProduct(prodId)

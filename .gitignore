@@ -37,3 +37,4 @@ build/config\.gypi
 # other
 .env
 dev.sh
+package-lock.json
