@@ -34,27 +34,7 @@ export class ProductsService {
     });
   }
 
-<<<<<<< HEAD
-  async updateProductPut(productId: string, postUpdateProduct: postData) {
-    const updatedProduct = await this.findProduct(productId);
-    await updatedProduct.update({
-      ...postUpdateProduct
-    });
-  }
-
-  async deleteProduct(prodId: string): Promise <void> {
-    await this.productModel.deleteOne({ _id: prodId }).exec();
-  }
-
-  async findProduct(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).exec();
-    if (!product) {
-      throw new NotFoundException('could not find product');
-    }
-    return product
-=======
   async deleteProduct(prodId: string): Promise<void> {
     await this.repository.delete(prodId);
->>>>>>> test/unit-tests
   }
 }
