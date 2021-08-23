@@ -4,11 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from './user/users.module';
 
 @Module({
   imports: [
-    JwtModule,
+    UsersModule,
     AuthModule,
     ProductsModule,
     MongooseModule.forRoot(

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import {JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -9,7 +9,6 @@ import { AuthRepository } from './repository/auth-repository';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private jwtModule:JwtModule,
     private readonly repository: AuthRepository
   ) {}
 
